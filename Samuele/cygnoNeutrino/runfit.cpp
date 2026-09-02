@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
       "_"+
       std::to_string(Nch*NIter)+"/";
     
-    
+    std::system(("mkdir -p "+res_dir).c_str());
     /*int com = std::system(("mkdir "+res_dir).c_str());
     if(com != 0) {
         std::cout<<com<<std::endl;
@@ -66,6 +66,9 @@ int main(int argc, char *argv[]) {
     sigMOD m("neutrinofit_S+B", datafile_name, bkgfile_name, sigfile_name);
     bkgMOD mbkg("neutrinofit_B",datafile_name,bkgfile_name);
     
+    m.WriteMarkovChain(res_dir + m.GetSafeName() + "_mcmc.root", "RECREATE");
+    mbkg.WriteMarkovChain(res_dir + mbkg.GetSafeName() + "_mcmc.root", "RECREATE");
+
     BCLog::OpenLog(res_dir+m.GetSafeName()+"_log.txt", BCLog::detail, BCLog::detail);
 
     BCLog::OutSummary("S+B model created");
@@ -96,6 +99,9 @@ int main(int argc, char *argv[]) {
     
     mgr.SetNChains(Nch);    
     
+    // write Markov chains for both models to ROOT files
+    mgr.WriteMarkovChain(res_dir + "mcmc_", "RECREATE", true, true);
+
     mgr.SetMarginalizationMethod(BCIntegrate::kMargMetropolis);
     mgr.SetPrecision(BCEngineMCMC::kHigh);
 
@@ -104,10 +110,8 @@ int main(int argc, char *argv[]) {
     mgr.SetAbsolutePrecision(1e-8);
     mgr.SetRelativePrecision(1e-10);
     
-    // run MCMC, marginalizing posterior
-    //mgr.MarginalizeAll();//BCIntegrate::kMargMetropolis);
-
-    //mgr.MarginalizeAll();
+    // run MCMC, marginalizing posterior and writing the Markov chains to ROOT files
+    mgr.MarginalizeAll();
     
     std::cout << "Int S+B from marg " << mgr.GetModel(0)->GetIntegral() << std::endl;
     std::cout << "Int B from marg " << mgr.GetModel(1)->GetIntegral() << std::endl;

@@ -534,7 +534,7 @@ int main(int argc, char** argv){
   Double_t CosTheta;
   Double_t Phi;
 
-  TFile* fBkg= TFile::Open("/nfs/cygno2/users/torellis/CYGNO_30_Sim/build/outfiles_V4/NormalizedHistoEFCu_V2.root");
+  TFile* fBkg= TFile::Open("NormalizedHistoEFCu.root");
   THStack* stack;
   stack = (THStack*)fBkg->Get("Hstack_cut");
 
